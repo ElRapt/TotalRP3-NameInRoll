@@ -1,4 +1,4 @@
-## Interface: 110105
+## Interface: 110107
 ## Title: Total RP 3: Name in Roll
 ## Notes: Displays the TRP name of the player in the roll result.
 ## Author: ElRapt
