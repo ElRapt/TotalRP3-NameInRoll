@@ -2,7 +2,7 @@
 
 ## About
 
-An unofficial module for [Total RP 3](https://github.com/Total-RP-3/Total-RP-3), designed to enhance immersion by replacing out-of-character (OOC) names in `/roll` messages with the character's in-character (IC) roleplay name and profile color. This makes roll outcomes easier to read and better integrated into the roleplay context.
+An unofficial module for [Total RP 3](https://github.com/Total-RP/Total-RP-3), designed to enhance immersion by replacing out-of-character (OOC) names in `/roll` messages with the character's in-character (IC) roleplay name and profile color. This makes roll outcomes easier to read and better integrated into the roleplay context.
 
 ## Features
 
