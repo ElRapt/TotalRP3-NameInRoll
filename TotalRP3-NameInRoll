@@ -1,0 +1,19 @@
+## Interface: 110105
+## Title: TotalRP3 - Name in Roll
+## Notes: Displays the TRP name of the player in the roll result.
+## Author: ElRapt
+## Version: 0.1.0
+## IconTexture: Interface\Icons\inv_misc_questionmark
+## Category-enUS: Roleplay
+## Category-deDE: Rollenspiel
+## Category-esES: Juego de rol
+## Category-esMX: Juego de rol
+## Category-frFR: Jeu de rôle
+## Category-itIT: Gioco di Ruolo
+## Category-koKR: 롤플레잉
+## Category-ptBR: Interpretação de Papel
+## Category-ruRU: Ролевая игра
+## Category-zhCN: 角色扮演
+## Category-zhTW: 角色扮演
+
+TotalRP3-NameInRoll.lua
