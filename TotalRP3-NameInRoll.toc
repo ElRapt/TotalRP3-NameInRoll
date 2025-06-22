@@ -1,9 +1,9 @@
 ## Interface: 110105
-## Title: TotalRP3 - Name in Roll
+## Title: Total RP 3 : Name in Roll
 ## Notes: Displays the TRP name of the player in the roll result.
 ## Author: ElRapt
 ## Version: 0.1.0
-## IconTexture: Interface\Icons\inv_misc_questionmark
+## IconTexture: Interface\Icons\inv_misc_dice_01
 ## Category-enUS: Roleplay
 ## Category-deDE: Rollenspiel
 ## Category-esES: Juego de rol

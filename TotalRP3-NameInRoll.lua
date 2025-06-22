@@ -1,4 +1,3 @@
--- TRP3-NameInRoll.lua
 -- Replaces /roll system messages with TRP3 profile names colored by their TRP3 profile color
 
 local RESET_CODE = "|r"
