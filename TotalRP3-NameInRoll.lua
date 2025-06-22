@@ -1,8 +1,7 @@
--- RollRP3-NameInRoll.lua
--- Replace /roll system messages with Total RP 3 profile names, with robust API calls and logging
+-- TRP3-NameInRoll.lua
+-- Replace /roll system messages with Total RP 3 profile names, colored by their TRP3 profile color, with robust API calls and logging
 
 local DEBUG = true
-local COLOR_CODE = "|cff00ff00" -- green
 local RESET_CODE = "|r"
 
 -- Cache globals before sandboxing
@@ -84,12 +83,29 @@ local function GetRPName(unit)
     return defaultName
 end
 
+-- Determine TRP3 color code for a unit
+local function GetRPColorCode(unit)
+    if _CreateFromUnit then
+        local ok, profile = pcall(_CreateFromUnit, unit)
+        if ok and profile and profile.GetCustomColorForDisplay then
+            local clr = profile:GetCustomColorForDisplay()
+            if clr then
+                -- Generate hex without leading '#', prepend WoW color code
+                local hex = clr:GenerateHexColor() or "00ff00"
+                return "|c" .. hex
+            end
+        end
+    end
+    -- fallback to green if anything fails
+    return "|cff00ff00"
+end
+
 -- Chat filter
 local function RollFilter(self, event, msg, ...)
     Log("RollFilter received: " .. tostring(msg))
     if not msg then return false end
 
-    -- match
+    -- match roll message
     local name, roll, min, max = msg:match(ROLL_PATTERN)
     if not name then
         Log("Pattern did not match")
@@ -97,34 +113,42 @@ local function RollFilter(self, event, msg, ...)
     end
     Log(string.format("Parsed name=%s roll=%s range=%s-%s", name, roll, min, max))
 
-    -- find unit
+    -- identify unit by name
     local unit
     if name == UnitName("player") then
         unit = "player"
     else
         local prefix = IsInRaid() and "raid" or "party"
-        for i=1,40 do
-            local u = prefix..i
+        for i = 1, 40 do
+            local u = prefix .. i
             if UnitExists(u) then
                 local n, r = UnitName(u)
-                local full = (r and r~="" and (n.."-"..r)) or n
-                if full==name or n==name then unit=u; break end
+                local full = (r and r ~= "" and (n .. "-" .. r)) or n
+                if full == name or n == name then
+                    unit = u
+                    break
+                end
             end
         end
     end
 
+    -- build display name
     local display = name
     if unit then
         local rpName = GetRPName(unit)
         if rpName ~= name then
-            display = COLOR_CODE .. rpName .. RESET_CODE
+            local colorCode = GetRPColorCode(unit)
+            display = colorCode .. rpName .. RESET_CODE
         end
     end
 
+    -- reconstruct localized message
     local out = RANDOM_ROLL_RESULT:format(display, tonumber(roll), tonumber(min), tonumber(max))
     Log("Output: " .. out)
-    if self and self:GetName()=="ChatFrame1" then
-        DEFAULT_CHAT_FRAME:AddMessage(out, 1,1,0)
+
+    -- output to primary frame
+    if self and self:GetName() == "ChatFrame1" then
+        DEFAULT_CHAT_FRAME:AddMessage(out, 1, 1, 0)
     end
     return true
 end
