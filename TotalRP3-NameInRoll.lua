@@ -2,7 +2,7 @@
 
 local RESET_CODE = "|r"
 
-local _C_IsLoaded = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded
+local _C_IsLoaded    = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded
 local _GetUnitRPName = TRP3_API and TRP3_API.register and TRP3_API.register.getUnitRPName
 local _CreateFromUnit = AddOn_TotalRP3 and AddOn_TotalRP3.Player and AddOn_TotalRP3.Player.CreateFromUnit
 
@@ -28,14 +28,22 @@ local function GetRPName(unit)
     if _CreateFromUnit then
         local ok, profile = pcall(_CreateFromUnit, unit)
         if ok and profile then
-            local full = profile.GetFullName and profile:GetFullName() or nil
-            local short = profile.GetName and profile:GetName() or nil
-            if full and full ~= "" then return full end
+            local full  = profile.GetFullName and profile:GetFullName() or nil
+            local short = profile.GetName      and profile:GetName()      or nil
+            if full  and full  ~= "" then return full  end
             if short and short ~= "" then return short end
         end
     end
 
     return defaultName
+end
+
+local function GetClassColorCode(unit)
+    local _, classFile = UnitClass(unit)
+    if not classFile then return "|cffffffff" end
+    local colorTable = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[classFile]
+    if not colorTable then return "|cffffffff" end
+    return string.format("|cff%02x%02x%02x", colorTable.r * 255, colorTable.g * 255, colorTable.b * 255)
 end
 
 local function GetRPColorCode(unit)
@@ -44,12 +52,14 @@ local function GetRPColorCode(unit)
         if ok and profile and profile.GetCustomColorForDisplay then
             local clr = profile:GetCustomColorForDisplay()
             if clr then
-                local hex = clr:GenerateHexColor() or "00ff00"
-                return "|c" .. hex
+                local hex = clr:GenerateHexColor()
+                if hex and hex ~= "" then
+                    return "|c" .. hex
+                end
             end
         end
     end
-    return "|cff00ff00"
+    return GetClassColorCode(unit)
 end
 
 local function RollFilter(self, event, msg, ...)
@@ -68,8 +78,7 @@ local function RollFilter(self, event, msg, ...)
                 local n, r = UnitName(u)
                 local full = (r and r ~= "" and (n .. "-" .. r)) or n
                 if full == name or n == name then
-                    unit = u
-                    break
+                    unit = u; break
                 end
             end
         end
@@ -79,14 +88,13 @@ local function RollFilter(self, event, msg, ...)
     if unit then
         local rpName = GetRPName(unit)
         if rpName ~= name then
-            local colorCode = GetRPColorCode(unit)
-            display = colorCode .. rpName .. RESET_CODE
+            display = GetRPColorCode(unit) .. rpName .. RESET_CODE
         end
     end
 
-    local out = RANDOM_ROLL_RESULT:format(display, tonumber(roll), tonumber(min), tonumber(max))
+    local output = RANDOM_ROLL_RESULT:format(display, tonumber(roll), tonumber(min), tonumber(max))
     if self and self:GetName() == "ChatFrame1" then
-        DEFAULT_CHAT_FRAME:AddMessage(out, 1, 1, 0)
+        DEFAULT_CHAT_FRAME:AddMessage(output, 1, 1, 0)
     end
     return true
 end
